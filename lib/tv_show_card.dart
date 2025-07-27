@@ -1,0 +1,92 @@
+import 'package:app_series_flutter/rating_widget.dart';
+import 'package:app_series_flutter/tv_show_model.dart';
+import 'package:flutter/material.dart';
+
+class TvShowCard extends StatelessWidget {
+  const TvShowCard({
+    super.key,
+    required this.tvShow,
+    required this.index,
+    required this.removeTvShow,
+  });
+
+  final TvShow tvShow;
+  final int index;
+  final Function(TvShow) removeTvShow;
+
+  @override
+  Widget build(BuildContext context) {
+    var colorScheme = Theme.of(context).colorScheme;
+
+    return Card(
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        leading: CircleAvatar(
+          backgroundColor: colorScheme.primary,
+          child: Text(
+            (index + 1).toString(),
+            style: TextStyle(
+              color: colorScheme.onPrimary,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        title: Text(
+          tvShow.title,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          tvShow.stream,
+          style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+        ),
+        trailing: ratingWidget(number: tvShow.rating),
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(tvShow.title),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 10,
+                children: [
+                  Text('Streaming: ${tvShow.stream}'),
+                  Text('Rating: ${tvShow.rating}'),
+                  Text(tvShow.summary),
+                ],
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    removeTvShow(tvShow);
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
+                  ),
+                  child: Text(
+                    'DELETE',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
+                  ),
+                  child: Text(
+                    'CLOSE',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
