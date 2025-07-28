@@ -1,16 +1,15 @@
 import 'package:app_series_flutter/tv_show_card.dart';
 import 'package:app_series_flutter/tv_show_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TvShowScreen extends StatefulWidget {
   const TvShowScreen({
-    super.key,
-    required this.tvShows,
-    required this.removeTvShow,
+    super.key
   });
 
-  final List<TvShow> tvShows;
-  final Function(TvShow) removeTvShow;
+  // final List<TvShow> tvShows;
+  // final Function(TvShow) removeTvShow;
 
   @override
   State<TvShowScreen> createState() => _TvShowScreenState();
@@ -19,13 +18,16 @@ class TvShowScreen extends StatefulWidget {
 class _TvShowScreenState extends State<TvShowScreen> {
   @override
   Widget build(BuildContext context) {
+
+    var model = Provider.of<TvShowModel>(context);
+    // var model = context.watch<TvShowModel>();
+
     return ListView.builder(
-      itemCount: widget.tvShows.length,
+      itemCount: model.tvShows.length,
       itemBuilder: (context, index) =>
           TvShowCard(
-            tvShow: widget.tvShows[index],
-            index: index,
-            removeTvShow: widget.removeTvShow
+            tvShow: model.tvShows[index],
+            index: index
           ),
     );
   }
