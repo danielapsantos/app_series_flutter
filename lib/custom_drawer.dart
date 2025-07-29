@@ -1,16 +1,18 @@
+import 'package:app_series_flutter/my_theme_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({
     super.key,
-    required this.switchTheme,
-    required this.isDark,
+    // required this.switchTheme,
+    // required this.isDark,
     required this.switchScreen,
   });
 
-  final bool isDark;
-  final Function() switchTheme;
+  // final bool isDark;
+  // final Function() switchTheme;
   final Function(int) switchScreen;
 
   @override
@@ -35,8 +37,8 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   SizedBox(height: 16),
                   ElevatedButton.icon(
-                    onPressed: switchTheme,
-                    icon: isDark
+                    onPressed: context.read<MyThemeModel>().switchTheme,
+                    icon: context.watch<MyThemeModel>().isDark
                         ? Icon(Icons.wb_sunny_rounded, size: 24)
                         : Icon(Icons.nightlight_round_sharp, size: 24),
                     label: Text('Change'),

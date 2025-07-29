@@ -3,22 +3,21 @@ import 'package:app_series_flutter/tv_show_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AddTvShowScreen extends StatefulWidget {
-  const AddTvShowScreen({
+class TvShowFormScreen extends StatefulWidget {
+  const TvShowFormScreen({
     super.key,
-    // required this.addTvShow,
-    // required void Function(int index) switchScreen,
+    required this.tvShow,
     required this.switchScreen,
   });
 
-  // final Function(TvShow) addTvShow;
+  final TvShow? tvShow;
   final Function(int) switchScreen;
 
   @override
-  State<AddTvShowScreen> createState() => _AddTvShowScreenState();
+  State<TvShowFormScreen> createState() => _TvShowFormScreenState();
 }
 
-class _AddTvShowScreenState extends State<AddTvShowScreen> {
+class _TvShowFormScreenState extends State<TvShowFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _streamController = TextEditingController();
@@ -26,7 +25,28 @@ class _AddTvShowScreenState extends State<AddTvShowScreen> {
   var _rating = 0;
 
   @override
+    void initState(){
+      super.initState();
+    if (widget.tvShow != null){
+      _titleController.text = widget.tvShow!.title;
+      _streamController.text = widget.tvShow!.stream;
+      _summaryController.text = widget.tvShow!.summary;
+      _rating = widget.tvShow!.rating;
+    }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _streamController.dispose();
+    _summaryController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    var isEditing = widget.tvShow != null;
+
     void submit() {
       if (_formKey.currentState!.validate()) {
         final newTvShow = TvShow(
@@ -35,8 +55,7 @@ class _AddTvShowScreenState extends State<AddTvShowScreen> {
           rating: _rating,
           summary: _summaryController.text,
         );
-        // to do: add newtvshow a list
-        // Provider.of<TvShowModel>(context, listen: false).addTvShow(newTvShow);
+        // Provider.of<TvShowModel>(context, listen: false).TvShowFormScreen(newTvShow);
         context.read<TvShowModel>().addTvShow(newTvShow, context); //não provoca nova renderização
         widget.switchScreen(0);
       }
@@ -47,7 +66,7 @@ class _AddTvShowScreenState extends State<AddTvShowScreen> {
       child: Column(
         children: [
           Text(
-            'Add Serie',
+            isEditing ? 'Edit Serie' : 'Add Serie',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16),
@@ -109,6 +128,7 @@ class _AddTvShowScreenState extends State<AddTvShowScreen> {
                     children: [
                       Text('Stars:', style: TextStyle(fontSize: 16)),
                       StarRating(
+                        value: _rating,
                         onRatingChanged: (rating) {
                           setState(() {
                             _rating = rating;
@@ -126,7 +146,7 @@ class _AddTvShowScreenState extends State<AddTvShowScreen> {
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   ),
                   child: Text(
-                    'ADD',
+                     isEditing ? 'EDIT' : 'ADD',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
