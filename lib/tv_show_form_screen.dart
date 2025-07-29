@@ -1,17 +1,13 @@
 import 'package:app_series_flutter/star_rating.dart';
 import 'package:app_series_flutter/tv_show_model.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class TvShowFormScreen extends StatefulWidget {
-  const TvShowFormScreen({
-    super.key,
-    required this.tvShow,
-    required this.switchScreen,
-  });
+  const TvShowFormScreen({super.key, this.tvShow});
 
   final TvShow? tvShow;
-  final Function(int) switchScreen;
 
   @override
   State<TvShowFormScreen> createState() => _TvShowFormScreenState();
@@ -25,9 +21,9 @@ class _TvShowFormScreenState extends State<TvShowFormScreen> {
   var _rating = 0;
 
   @override
-    void initState(){
-      super.initState();
-    if (widget.tvShow != null){
+  void initState() {
+    super.initState();
+    if (widget.tvShow != null) {
       _titleController.text = widget.tvShow!.title;
       _streamController.text = widget.tvShow!.stream;
       _summaryController.text = widget.tvShow!.summary;
@@ -55,9 +51,15 @@ class _TvShowFormScreenState extends State<TvShowFormScreen> {
           rating: _rating,
           summary: _summaryController.text,
         );
-        // Provider.of<TvShowModel>(context, listen: false).TvShowFormScreen(newTvShow);
-        context.read<TvShowModel>().addTvShow(newTvShow, context); //não provoca nova renderização
-        widget.switchScreen(0);
+
+        isEditing
+          ? context.read<TvShowModel>().editTvShow(
+            widget.tvShow!, newTvShow, context,)
+          : context.read<TvShowModel>().addTvShow(
+            newTvShow,
+            context,
+          ); //não provoca nova renderização
+        context.go('/');
       }
     }
 
@@ -146,7 +148,7 @@ class _TvShowFormScreenState extends State<TvShowFormScreen> {
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   ),
                   child: Text(
-                     isEditing ? 'EDIT' : 'ADD',
+                    isEditing ? 'EDIT' : 'ADD',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),

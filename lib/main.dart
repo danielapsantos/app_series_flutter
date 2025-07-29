@@ -1,9 +1,10 @@
+import 'package:app_series_flutter/base_screen.dart';
 import 'package:app_series_flutter/tv_show_form_screen.dart';
-import 'package:app_series_flutter/custom_drawer.dart';
 import 'package:app_series_flutter/my_theme_model.dart';
 import 'package:app_series_flutter/tv_show_model.dart';
 import 'package:app_series_flutter/tv_show_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -14,17 +15,34 @@ void main() {
     // )
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-        create: (context) => TvShowModel()
-        ),
-        ChangeNotifierProvider(
-          create: (context) => MyThemeModel()
-        ),
+        ChangeNotifierProvider(create: (context) => TvShowModel()),
+        ChangeNotifierProvider(create: (context) => MyThemeModel()),
       ],
-        child:  const MainApp()
-    )
+      child: const MainApp(),
+    ),
   );
 }
+
+final GoRouter _router = GoRouter(
+  routes: [
+    ShellRoute(
+      builder: (context, state, child) => BaseScreen(child: child),
+      routes: [
+        GoRoute(path: '/', builder: (context, state) => TvShowScreen()),
+        GoRoute(path: '/add', builder: (context, state) => TvShowFormScreen()),
+        GoRoute(
+          path: '/edit/:index',
+          builder: (context, state) {
+            final index = int.parse(state.pathParameters['index']!);
+            return TvShowFormScreen(
+              tvShow: context.read<TvShowModel>().tvShows[index],
+            );
+          },
+        ),
+      ],
+    ),
+  ],
+);
 
 class MainApp extends StatefulWidget {
   const MainApp({super.key});
@@ -34,38 +52,16 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  //screen control
-  int currentScreenIndex = 0;
-
-  List<Widget> get screens => [
-    TvShowScreen(),
-    TvShowFormScreen(
-      switchScreen: switchScreen
-    ),
-  ];
-
-  void switchScreen(int index) {
-    setState(() {
-      currentScreenIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: _router,
       debugShowCheckedModeBanner: false,
       theme: context.read<MyThemeModel>().customTheme,
       darkTheme: context.read<MyThemeModel>().customThemeDark,
       themeMode: context.watch<MyThemeModel>().isDark
-        ? ThemeMode.dark
-        : ThemeMode.light,
-      home: Scaffold(
-        appBar: AppBar(title: const Text('I Love Series 🎬')),
-        drawer: CustomDrawer(
-          switchScreen: switchScreen,
-        ),
-        body: screens[currentScreenIndex],
-      ),
+          ? ThemeMode.dark
+          : ThemeMode.light,
     );
   }
 }

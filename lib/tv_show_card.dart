@@ -1,19 +1,14 @@
 import 'package:app_series_flutter/rating_widget.dart';
 import 'package:app_series_flutter/tv_show_model.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class TvShowCard extends StatelessWidget {
-  const TvShowCard({
-    super.key,
-    required this.tvShow,
-    required this.index,
-    // required this.removeTvShow,
-  });
+  const TvShowCard({super.key, required this.tvShow, required this.index});
 
   final TvShow tvShow;
   final int index;
-  // final Function(TvShow) removeTvShow;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +41,19 @@ class TvShowCard extends StatelessWidget {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: Text(tvShow.title),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(tvShow.title),
+                  IconButton.outlined(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: Icon(
+                      Icons.close, 
+                      size: 20,
+                    ),
+                  ),
+                ],
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,13 +80,19 @@ class TvShowCard extends StatelessWidget {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () {
+                    final index = context.read<TvShowModel>().tvShows.indexOf(
+                      tvShow,
+                    );
+                    Navigator.of(context).pop();
+                    context.go('/edit/$index');
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary,
                     foregroundColor: colorScheme.onPrimary,
                   ),
                   child: Text(
-                    'CLOSE',
+                    'EDIT',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
