@@ -24,10 +24,12 @@ class _TvShowScreenState extends State<TvShowScreen> {
 
     return ListView.builder(
       itemCount: model.tvShows.length,
-      itemBuilder: (context, index) =>
-          TvShowCard(
-            tvShow: model.tvShows[index],
-            index: index
+      itemBuilder: (context, index) => Consumer<TvShowModel>(
+            builder: (context, model, child) =>
+              TvShowCard(
+              tvShow: model.tvShows[index],
+              index: index
+            ),
           ),
     );
   }

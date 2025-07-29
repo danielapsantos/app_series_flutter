@@ -37,7 +37,7 @@ class _AddTvShowScreenState extends State<AddTvShowScreen> {
         );
         // to do: add newtvshow a list
         // Provider.of<TvShowModel>(context, listen: false).addTvShow(newTvShow);
-        context.read<TvShowModel>().addTvShow(newTvShow); //não provoca nova renderização
+        context.read<TvShowModel>().addTvShow(newTvShow, context); //não provoca nova renderização
         widget.switchScreen(0);
       }
     }

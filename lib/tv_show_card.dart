@@ -60,7 +60,7 @@ class TvShowCard extends StatelessWidget {
               actions: [
                 ElevatedButton(
                   onPressed: () {
-                    context.read<TvShowModel>().removeTvShow(tvShow);
+                    context.read<TvShowModel>().removeTvShow(tvShow, context);
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
